@@ -75,11 +75,29 @@ def find_cheapest_flights(flight_info):
     time.sleep(1)
     going_to_element.send_keys(Keys.DOWN, Keys.RETURN)
 
-    departing_box_xpath = f'//button[@aria-label="Date {departure_month} {departure_date}"]'
+    departing_box_xpath = '//*[@id="FlightSearchForm_ONE_WAY"]/div/div[2]/div/div[1]/div/div/button'
     
     depart_box_element = WebDriverWait(driver,5).until(
         EC.presence_of_element_located((By.XPATH, departing_box_xpath))
         )
     
+    
     depart_box_element.click()
     time.sleep(2)
+
+    trip_date_xpath = '//button[contains(@aria-label,"{}")]'.format(trip_date)
+    departing_date_element = ""
+    while departing_date_element == "":
+        try:
+            departing_date_element = WebDriverWait(driver,3).until(
+            EC.presence_of_element_located((By.XPATH, trip_date_xpath))
+            )
+            departing_date_element.click()
+        except TimeoutException:
+           departing_date_element=""
+           next_month_xpath = '//button[@data-stid="date-picker-paging"][2]'
+           driver.find_element_by_xpath(next_month_xpath).click()
+           time.sleep(1)
+    
+    depart_date_done_xpath = '//button[@data-stid="apply-date-picker"]'
+    driver.find_element_by_xpath(depart_date_done_xpath).click()
